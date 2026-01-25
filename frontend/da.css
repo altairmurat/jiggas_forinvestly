@@ -1,0 +1,147 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at top left, #f5f5f5, #ffffff);
+  color: #1a1a1a;
+  overflow-x: hidden;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 64px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #1a1a1a;
+}
+
+nav {
+  display: flex;
+  gap: 48px;
+  font-size: 14px;
+  color: #555;
+}
+
+nav span {
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+nav span:hover {
+  color: #000;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 60px;
+  padding: 80px 64px;
+  align-items: center;
+}
+
+.hero h1 {
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #1a1a1a;
+}
+
+.changing-word {
+  display: inline-block;
+  min-width: 260px;
+  font-size: 56px;
+  font-weight: 900;
+  color: #3b82f6;
+  transition: opacity 0.25s ease, transform 0.25s ease, color 0.25s ease;
+}
+
+.hero p {
+  margin-top: 24px;
+  max-width: 520px;
+  font-size: 16px;
+  color: #555;
+}
+
+.cta {
+  margin-top: 40px;
+}
+
+.cta button {
+  position: relative;
+  padding: 18px 42px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  color: #fff;
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.35),
+              0 10px 20px rgba(6, 182, 212, 0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+.cta button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.4), transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.cta button:hover::after {
+  transform: translateX(100%);
+}
+
+.cta button:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 30px 60px rgba(59, 130, 246, 0.45),
+              0 20px 40px rgba(6, 182, 212, 0.45);
+}
+
+.demo {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.15);
+}
+
+.demo video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.demo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(255,255,255,0.5), transparent);
+  pointer-events: none;
+}
+
+@media (max-width: 1024px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h1,
+  .changing-word {
+    font-size: 42px;
+  }
+}

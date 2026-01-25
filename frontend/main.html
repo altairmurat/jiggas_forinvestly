@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>twin — выбери переписку</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(900px 500px at 10% 10%, rgba(34,211,238,0.18), transparent 40%),
+        radial-gradient(700px 400px at 90% 90%, rgba(129,140,248,0.18), transparent 40%),
+        #020617;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .logo {
+      font-size: 42px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #22d3ee, #818cf8);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .headline {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .subheadline {
+      font-size: 16px;
+      opacity: 0.7;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px;
+      margin-top: 56px;
+    }
+
+    .card {
+      position: relative;
+      height: 320px;
+      border-radius: 28px;
+      padding: 28px;
+      background: linear-gradient(180deg, rgba(15,23,42,0.95), rgba(2,6,23,0.95));
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.06),
+        0 30px 80px rgba(0,0,0,0.85);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(400px 200px at var(--x,50%) var(--y,50%), rgba(255,255,255,0.12), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow:
+        0 40px 120px rgba(0,0,0,0.9),
+        0 0 80px rgba(34,211,238,0.18);
+    }
+
+    .icon {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 18px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 18px rgba(255,255,255,0.25));
+    }
+
+    .whatsapp .icon {
+      filter: drop-shadow(0 0 22px rgba(37, 211, 102, 0.45));
+    }
+
+    .telegram .icon {
+      filter: drop-shadow(0 0 22px rgba(56, 189, 248, 0.45));
+    }
+
+    .instagram .icon {
+      filter: drop-shadow(0 0 22px rgba(236, 72, 153, 0.45));
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .card-desc {
+      font-size: 15px;
+      opacity: 0.75;
+      line-height: 1.5;
+    }
+
+    .card-footer {
+      position: absolute;
+      bottom: 24px;
+      left: 28px;
+      right: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      opacity: 0.85;
+    }
+
+    .arrow {
+      font-size: 18px;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover .arrow {
+      transform: translateX(6px);
+    }
+
+    .hint {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 14px;
+      opacity: 0.55;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">twin</div>
+      <div class="headline">Выбери переписку</div>
+      <div class="subheadline">
+        Загрузите историю сообщений из нужной соцсети — мы проанализируем диалоги,
+        поможем разобраться, найти инсайты или дать совет
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card whatsapp" onclick="selectPlatform('whatsapp')">
+        <img class="icon" src="assets/logos/wp.png" alt="WhatsApp" />
+        <div class="card-title">WhatsApp</div>
+        <div class="card-desc">Личные и групповые чаты. Идеально для анализа диалогов и отношений.</div>
+        <div class="card-footer">
+          <span>Выбрать</span>
+          <span class="arrow">→</span>
+        </div>
+      </div>
+
+      <div class="card telegram" onclick="selectPlatform('telegram')">
+        <img class="icon" src="assets/logos/telegram.png" alt="Telegram" />
+        <div class="card-title">Telegram</div>
+        <div class="card-desc">Чаты, каналы и боты. Отлично подходит для поиска смыслов и структуры.</div>
+        <div class="card-footer">
+          <span>Выбрать</span>
+          <span class="arrow">→</span>
+        </div>
+      </div>
+
+      <div class="card instagram" onclick="selectPlatform('instagram')">
+        <img class="icon" src="assets/logos/insta.png" alt="Instagram" />
+        <div class="card-title">Instagram</div>
+        <div class="card-desc">Direct-сообщения. Поможем понять тон общения и скрытые сигналы.</div>
+        <div class="card-footer">
+          <span>Выбрать</span>
+          <span class="arrow">→</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint">Нажмите на платформу, чтобы продолжить</div>
+  </div>
+
+  <script>
+    const token = new URLSearchParams(window.location.search).get('token');
+
+    function selectPlatform(platform) {
+      console.log('Выбрана платформа:', platform);
+      window.location.href = `upload.html?platform=${platform}&token=${token}`
+    }
+
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--x', `${e.clientX - rect.left}px`);
+        card.style.setProperty('--y', `${e.clientY - rect.top}px`);
+      });
+    });
+  </script>
+</body>
+</html>

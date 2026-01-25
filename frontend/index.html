@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Twin — Твой ИИ в переписке</title>
+  <!-- Подключаем светлую тему по умолчанию -->
+  <link rel="stylesheet" href="da.css" />
+  <div style="margin-left:20px;">
+  <input
+    type="color"
+    id="accentColor"
+    title="Выбрать цвет сайта"
+    style="cursor:pointer; width:32px; height:32px; border:none; background:none;"
+  />
+</div>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Twin</div>
+    <nav>
+        <span onclick="changeTheme()">Change Theme</span>
+        <span>Демо</span>
+        <span onclick="price()">Цена</span>
+        <span>FAQ</span>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>
+        Твой ИИ<br>
+        <span id="word" class="changing-word">друг</span><br>
+        в переписке
+      </h1>
+
+      <p>
+        Загрузи экспорт переписки из соцсетей — и общайся с ИИ, который понимает контекст, людей и скрытые смыслы.
+      </p>
+
+      <div class="cta">
+        <button onclick="register()">Нажми чтобы начать сейчас</button>
+      </div>
+    </section>
+
+    <section class="demo">
+      <video src="demo.mp4" autoplay loop muted playsinline></video>
+    </section>
+  </main>
+
+  <script>
+    const words = [
+      { text: "друг", color: "#3b82f6" },
+      { text: "советник", color: "#a855f7" },
+      { text: "поисковик", color: "#34d399" }
+    ];
+    let index = 0;
+    const wordEl = document.getElementById("word");
+    setInterval(() => {
+      wordEl.style.opacity = "0";
+      wordEl.style.transform = "translateY(16px)";
+      setTimeout(() => {
+        index = (index + 1) % words.length;
+        wordEl.textContent = words[index].text;
+        wordEl.style.color = words[index].color;
+        wordEl.style.opacity = "1";
+        wordEl.style.transform = "translateY(0)";
+      }, 250);
+    }, 1600);
+
+    function register() {
+      window.location.href = 'registerpage.html';
+    }
+
+    function price() {
+      window.location.href = 'pricing.html';
+    }
+
+    function changeTheme() {
+      const link = document.querySelector("link[rel=stylesheet]");
+      if (!link) return;
+
+      const currentFile = link.getAttribute("href"); // путь к CSS
+      if (currentFile.endsWith("da.css")) {
+          link.setAttribute("href", "dark.css");  // переключаем на тёмную
+      } else {
+          link.setAttribute("href", "da.css");    // переключаем на светлую
+      }
+    }
+
+    const colorPicker = document.getElementById("accentColor");
+
+  colorPicker.addEventListener("input", (e) => {
+    const color = e.target.value;
+
+    // создаём или меняем CSS-переменную
+    document.documentElement.style.setProperty("--accent", color);
+
+    // запасной вариант: если в CSS нет переменных
+    document.querySelectorAll(
+      ".logo, button, .changing-word"
+    ).forEach(el => {
+      el.style.color = color;
+      el.style.backgroundColor = el.tagName === "BUTTON" ? color : "";
+    });
+  });
+  </script>
+</body>
+</html>

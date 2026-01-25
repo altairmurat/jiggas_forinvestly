@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>TWIN — Upload</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    /* ===== YOUR CSS — UNCHANGED ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Inter, system-ui, sans-serif; }
+
+    body {
+      height: 100vh;
+      background: #0b0f19;
+      color: #e5e7eb;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 300px;
+      background: #0f172a;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .sidebar-header h2 {
+      font-size: 18px;
+      color: #38bdf8;
+    }
+
+    .new-chat-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 22px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #052e16;
+    }
+
+    .chat-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+    }
+
+    .chat-item {
+      padding: 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.04);
+      cursor: pointer;
+    }
+
+    .chat-item.active,
+    .chat-item:hover {
+      background: rgba(56,189,248,0.18);
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-weight: 600;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 14px 16px;
+      border-radius: 14px;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      color: #020617;
+    }
+
+    .ai {
+      align-self: flex-start;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .input-area {
+      padding: 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .input-area input[type="text"] {
+      flex: 1;
+      background: #020617;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: white;
+      padding: 14px;
+      border-radius: 12px;
+      min-width: 200px;
+    }
+
+    .input-area input[type="file"] { display: none; }
+
+    .file-btn,
+    .send-btn {
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .file-btn {
+      background: rgba(255,255,255,0.08);
+      color: white;
+    }
+
+    .send-btn {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #052e16;
+    }
+
+    .file-name {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>Чаты</h2>
+    <button class="new-chat-btn" onclick="createNewChat()">+</button>
+  </div>
+  <div id="chatList" class="chat-list"></div>
+</aside>
+
+<main class="main">
+  <div class="chat-header" id="chatTitle">Новый чат</div>
+
+  <div class="messages" id="messages">
+    <div class="ai message">Загрузите ZIP файл и задайте вопрос</div>
+  </div>
+
+  <div class="input-area">
+    <label class="file-btn">
+      📎 ZIP
+      <input type="file" id="zipInput" accept=".zip" />
+    </label>
+    <div class="file-name" id="fileName"></div>
+
+    <input type="text" id="promptInput" placeholder="Введите запрос..." />
+    <button class="send-btn" onclick="sendMessage()">Отправить</button>
+  </div>
+</main>
+
+<script>
+  const API_URL = "http://localhost:8000";
+  const token = new URLSearchParams(window.location.search).get("token");
+
+  let chats = [];
+  let activeChatId = null;
+  let currentZipFile = null;
+
+  document.getElementById("zipInput").addEventListener("change", e => {
+    currentZipFile = e.target.files[0];
+    document.getElementById("fileName").textContent = currentZipFile.name;
+  });
+
+  function createNewChat() {
+    activeChatId = null;
+    currentZipFile = null;
+    document.getElementById("zipInput").value = "";
+    document.getElementById("fileName").textContent = "";
+    document.getElementById("chatTitle").textContent = "Новый чат";
+    document.getElementById("messages").innerHTML =
+      `<div class="ai message">Загрузите ZIP файл и задайте вопрос</div>`;
+  }
+
+  function renderChats() {
+    const list = document.getElementById("chatList");
+    list.innerHTML = "";
+
+    chats.forEach(chat => {
+      const div = document.createElement("div");
+      div.className = "chat-item" + (chat.id === activeChatId ? " active" : "");
+      div.textContent = chat.title;
+      div.onclick = () => {
+        activeChatId = chat.id;
+        renderChats();
+        renderMessages();
+      };
+      list.appendChild(div);
+    });
+  }
+
+  function renderMessages() {
+    const box = document.getElementById("messages");
+    box.innerHTML = "";
+    const chat = chats.find(c => c.id === activeChatId);
+    if (!chat) return;
+
+    document.getElementById("chatTitle").textContent = chat.title;
+
+    chat.messages.forEach(m => {
+      const div = document.createElement("div");
+      div.className = "message " + m.role;
+      div.textContent = m.text;
+      box.appendChild(div);
+    });
+  }
+
+  async function sendMessage() {
+    const instruction = document.getElementById("promptInput").value.trim();
+    if (!instruction || !currentZipFile) {
+      alert("ZIP и запрос обязательны");
+      return;
+    }
+
+    if (!activeChatId) {
+      const chat = {
+        id: Date.now(),
+        title: currentZipFile.name.replace(".zip", ""),
+        messages: []
+      };
+      chats.push(chat);
+      activeChatId = chat.id;
+      renderChats();
+    }
+
+    const chat = chats.find(c => c.id === activeChatId);
+    chat.messages.push({ role: "user", text: instruction });
+    renderMessages();
+
+    const formData = new FormData();
+    formData.append("uploaded_zip", currentZipFile);
+    formData.append("instruction", instruction);
+    formData.append("platform", "whatsapp");
+
+    const res = await fetch(`${API_URL}/analyze_with_zip`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData
+    });
+
+    const data = await res.json();
+    chat.messages[chat.messages.length - 1] = {
+  role: 'ai',
+  text: data.response
+};
+
+    renderMessages();
+  }
+</script>
+
+</body>
+</html>
