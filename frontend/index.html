@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Twin — Твой ИИ в переписке</title>
   <!-- Подключаем светлую тему по умолчанию -->
-  <link rel="stylesheet" href="da.css" />
+  <link rel="stylesheet" href="bright.css" />
   <div style="margin-left:20px;">
   <input
     type="color"
@@ -82,10 +82,10 @@
       if (!link) return;
 
       const currentFile = link.getAttribute("href"); // путь к CSS
-      if (currentFile.endsWith("da.css")) {
+      if (currentFile.endsWith("bright.css")) {
           link.setAttribute("href", "dark.css");  // переключаем на тёмную
       } else {
-          link.setAttribute("href", "da.css");    // переключаем на светлую
+          link.setAttribute("href", "bright.css");    // переключаем на светлую
       }
     }
 
@@ -108,3 +108,4 @@
   </script>
 </body>
 </html>
+
